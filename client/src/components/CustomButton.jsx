@@ -8,6 +8,9 @@ const CustomButton = ({ title, containerStyles, iconRight, type, onClick }) => {
       className={`inline-flex items-center ${containerStyles}`}
     >
       {title}
+
+      {iconRight && <div className='m1-2'>{iconRight}
+      </div>}
     </button>
   );
 }
