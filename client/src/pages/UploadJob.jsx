@@ -129,7 +129,7 @@ const UploadJob = () => {
               <CustomButton
                 type='submit'
                 containerStyles='inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-8 py-2 text-sm font-medium text-white hover:bg-[#1d4fd846] hover:text-[#1d4fd8] focus:outline-none '
-                title='Sumbit'
+                title='Submit'
               />
             </div>
           </form>
