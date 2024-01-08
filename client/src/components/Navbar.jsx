@@ -135,7 +135,7 @@ function MenuList({ user, onClick }) {
                 <Link to='/'>Find Job</Link>      
             </li>
             <li>
-                <Link to='/'>Listers</Link>      
+                <Link to='/listers'>Listers</Link>      
             </li> <li>
                 <Link to='/upload-job'>Upload Job</Link>      
             </li> <li>
@@ -180,8 +180,8 @@ function MenuList({ user, onClick }) {
           <Link to='/' onClick={handleCloseNavbar}>
             Find Job
           </Link>
-          <Link to='/companies' onClick={handleCloseNavbar}>
-            Companies
+          <Link to='/listers' onClick={handleCloseNavbar}>
+            Listers
           </Link>
           <Link
             onClick={handleCloseNavbar}
