@@ -43,7 +43,7 @@ function App() {
               : "/seeker-profile/:id"
             }
             element={<SeekerProfile />}
-            />
+          />
 
             <Route path={"/lister-profile"} element={<ListerProfile />} />
             <Route path={"/lister-profile/:id"} element={<ListerProfile />} />
