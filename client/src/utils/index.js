@@ -1,6 +1,7 @@
 import axios from "axios"
 
-const API_URL = "http://localhost:8800/api-v1"
+// const API_URL = "http://localhost:8800/api-v1"
+const API_URL = "https://gigconnect.onrender.com/api-v1/jobs/find-jobs"
 
 export const API = axios.create({
     baseURL: API_URL,
