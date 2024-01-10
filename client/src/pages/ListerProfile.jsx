@@ -8,6 +8,9 @@ import { FiPhoneCall, FiEdit3, FiUpload } from "react-icons/fi";
 import { Link, useParams } from "react-router-dom";
 import { listers, jobs } from "../utils/data";
 import { CustomButton, JobCard, Loading, TextInput } from "../components";
+import { apiRequest } from "../utils/index";
+import { handleFileUpload } from "../utils/index";
+import {Login} from "../redux/userSlice"
 
 const ListerForm = ({ open, setOpen }) => {
   const { user } = useSelector((state) => state.user);
@@ -25,14 +28,49 @@ const ListerForm = ({ open, setOpen }) => {
   const dispatch = useDispatch();
   const [profileImage, setProfileImage] = useState("");
   const [uploadCv, setUploadCv] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [errMsg, setErrMsg] = useState({ status: false, message: "" });
 
-  const onSubmit = () => {};
+  const onSubmit = async (data) => {
+    setIsLoading(true)
+    setErrMsg(null)
+
+    const uri = profileImage && (await handleFileUpload(profileImage))
+
+    const newData = uri ? { ...data, profileUrl: uri  } : data;
+
+    try {
+      const res = await apiRequest({
+        url: "/listers/update-lister",
+        token: user?.token,
+        data: newData,
+        method: "PUT",
+      })
+      setIsLoading(false)
+
+      if (res.status === "failed") {
+        setErrMsg({ ...res  })
+      } else  {
+        setErrMsg ({  status: "success", message: res.message})
+        dispatch(Login(data))
+        localStorage.setItem("userInfo", JSON.stringify(data))
+
+        setTimeout(() => {
+          window.location.reload()
+        }, 1500)
+      } 
+    } catch (error) {
+      console.log(error)
+      setIsLoading(false)
+    }
+
+  };
 
   const closeModal = () => setOpen(false);
 
   return (
     <>
-      <Transition appear show={opener ?? false} as={Fragment}>
+      <Transition appear show={open ?? false} as={Fragment}>
         <Dialog as='div' className='relative z-50' onClose={closeModal}>
           <Transition.Child
             as={Fragment}
@@ -139,11 +177,17 @@ const ListerForm = ({ open, setOpen }) => {
                     </div>
 
                     <div className='mt-4'>
-                      <CustomButton
+                      {
+                        isLoading ? (
+                          <Loading/>
+                        ) :
+                        <CustomButton
                         type='submit'
                         containerStyles='inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-8 py-2 text-sm font-medium text-white hover:bg-[#1d4fd846] hover:text-[#1d4fd8] focus:outline-none '
                         title={"Submit"}
                       />
+                      }
+                      
                     </div>
                   </form>
                 </Dialog.Panel>
@@ -163,8 +207,34 @@ const ListerProfile = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [openForm, setOpenForm] = useState(false);
 
+  const fetchLister = async() => {
+        setIsLoading(true)
+        let id = null
+
+          if (params.id && params.id !== undefined)
+          {
+            id = params?.id
+          } else  {
+            id = user?._id
+          }
+
+            try {
+              const res = await apiRequest({
+                url: "/listers/get-lister",
+                id,
+                method: "GET",
+              })
+
+              setInfo(res?.data)
+              setIsLoading(false)
+            } catch (error) {
+              console.log(error)
+              setIsLoading(false)
+            }
+  }
+
   useEffect(() => {
-    setInfo(listers[parseInt(params?.id) - 1 ?? 0]);
+    fetchLister();
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   }, []);
 
@@ -177,11 +247,11 @@ const ListerProfile = () => {
       <div className=''>
         <div className='w-full flex flex-col md:flex-row gap-3 justify-between'>
           <h2 className='text-gray-600 text-xl font-semibold'>
-            Welcome, {info?.name}
+            Welcome, Lister
           </h2>
 
           {user?.user?.accountType === undefined &&
-            info?._id === user?.user?._id && (
+          info?._id === user?.user?._id && (
               <div className='flex items-center justifu-center py-5 md:py-0 gap-4'>
                 <CustomButton
                   onClick={() => setOpenForm(true)}
@@ -202,7 +272,7 @@ const ListerProfile = () => {
 
         <div className='w-full flex flex-col md:flex-row justify-start md:justify-between mt-4 md:mt-8 text-sm'>
           <p className='flex gap-1 items-center   px-3 py-1 text-slate-600 rounded-full'>
-            <HiLocationMarker /> {info?.location ?? "No Location"}
+            <HiLocationMarker /> {info?.location ?? "No location"}
           </p>
           <p className='flex gap-1 items-center   px-3 py-1 text-slate-600 rounded-full'>
             <AiOutlineMail /> {info?.email ?? "No Email"}
@@ -222,7 +292,7 @@ const ListerProfile = () => {
         <p>Jobs Posted</p>
 
         <div className='flex flex-wrap gap-3'>
-          {jobs?.map((job, index) => {
+          {info?.jobPosts?.map((job, index) => {
             const data = {
               name: info?.name,
               email: info?.email,

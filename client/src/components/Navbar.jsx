@@ -7,12 +7,18 @@
  import { AiOutlineClose, AiOutlineLogout } from "react-icons/ai";
  import { Link } from "react-router-dom";
  import { users } from '../utils/data';
+ import { Logout } from "../redux/userSlice"
 
 import CustomButton from './CustomButton';
+import { useSelector, useDispatch } from 'react-redux';
 
 function MenuList({ user, onClick }) {
+  const dispatch = useDispatch();
 
-  const handleLogOut = ()=> {}
+  const handleLogout = ()=> {
+    dispatch(Logout());
+    window.location.replace("/")
+  }
 
   return (
     <div>
@@ -110,10 +116,8 @@ function MenuList({ user, onClick }) {
 
 
  const Navbar = () => {
-   const user = users[1];
+   const {  user  } = useSelector((state) => state.user);
    const [isOpen, setIsOpen] = useState(false);
-
-   console.log(user);
 
    const handleCloseNavbar = () => {
     setIsOpen((prev) => !prev);
@@ -145,7 +149,7 @@ function MenuList({ user, onClick }) {
 
           <div className=' lg:block'>
              {!user?.token ? (
-                <Link to='user/auth'>
+                <Link to='user-auth'>
                   <CustomButton title="Sign In"
                   containerStyles="text-blue-600 py-1.5 
                   px-5 focus:outline-none
@@ -156,7 +160,7 @@ function MenuList({ user, onClick }) {
 
               ) : (
                 <div>
-                  <MenuList user={user} />
+                  <MenuList user={user} onClick={handleCloseNavbar} />
                 </div> 
               )}  
           </div>
@@ -205,7 +209,7 @@ function MenuList({ user, onClick }) {
               </a>
             ) : (
               <div>
-                <MenuList user={user} onClick={handleCloseNavbar} />
+                <MenuList user={user} />
               </div>
             )}
           </div>

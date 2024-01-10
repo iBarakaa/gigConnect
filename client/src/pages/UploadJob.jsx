@@ -1,9 +1,14 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { CustomButton, JobCard, JobTypes, TextInput } from "../components";
+import { useDispatch, useSelector } from "react-redux";
+import { apiRequest } from "../utils/index";
+
+
 import { jobs } from "../utils/data";
 
 const UploadJob = () => {
+  const { user } = useSelector((state) => state.user)
   const {
     register,
     handleSubmit,
@@ -16,9 +21,57 @@ const UploadJob = () => {
   });
 
   const [errMsg, setErrMsg] = useState("");
-  const [jobTitle, setJobTitle] = useState("");
+  const [isLoading, setIsLoading] = useState("");
+  const [jobType, setJobType] = useState("One-off");
+  const [recentPost, setRecentPost] = useState([]);
 
-  const onSubmit = async (data) => {};
+  const onSubmit = async (data) => {
+    setIsLoading(true)
+    setErrMsg(null)
+
+    const newData = {...data, jobType: jobType}
+
+    try {
+      const res = await apiRequest({
+        url: "/jobs/upload-job",
+        token: user?.token,
+        data: newData,
+        method: "POST",
+      })
+      setIsLoading(false)
+
+      if (res.status === "failed") {
+        setErrMsg({ ...res  })
+      } else  {
+        setErrMsg ({  status: "success", message: res.message})
+        setTimeout(() => {
+          window.location.reload()
+        }, 1500)
+      } 
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error)
+      setIsLoading(false)
+    }
+
+  };
+
+  const getRecentPost = async() => {
+    try {
+      const id = user?.__id;
+      
+      const res = await apiRequest({
+        url: "/listers/get-lister/" + id,
+        method: "GET",
+      })
+
+      setRecentPost(res?.data?.jobPosts);
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
 
   return (
     <div className='container mx-auto flex flex-col md:flex-row gap-8 2xl:gap-14 bg-[#f7fdfd] px-5'>
@@ -45,7 +98,7 @@ const UploadJob = () => {
             <div className='w-full flex gap-4'>
               <div className={`w-1/2 mt-2`}>
                 <label className='text-gray-600 text-sm mb-1'>Job Type</label>
-                <JobTypes jobTitle={jobTitle} setJobTitle={setJobTitle} />
+                <JobTypes jobTitle={jobType} setJobTitle={setJobType} />
               </div>
 
               <div className='w-1/2'>
@@ -110,13 +163,13 @@ const UploadJob = () => {
 
             <div className='flex flex-col'>
               <label className='text-gray-600 text-sm mb-1'>
-                Core Responsibilities
+                Requirements
               </label>
               <textarea
                 className='rounded border border-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-base px-4 py-2 resize-none'
                 rows={4}
                 cols={6}
-                {...register("resposibilities")}
+                {...register("requirements")}
               ></textarea>
             </div>
 

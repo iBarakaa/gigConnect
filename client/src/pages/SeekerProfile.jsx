@@ -201,6 +201,7 @@ const SeekerForm = ({ open, setOpen }) => {
 };
 
 const SeekerProfile = () => {
+  
   const { user } = useSelector((state) => state.user);
   const [open, setOpen] = useState(false);
   const userInfo = user;
@@ -214,18 +215,18 @@ const SeekerProfile = () => {
           </h1>
 
           <h5 className='text-blue-700 text-base font-bold'>
-            {userInfo?.jobTitle || "Add Job Title"}
+            {userInfo?.jobTitle || "Plumber"}
           </h5>
 
           <div className='w-full flex flex-wrap lg:flex-row justify-between mt-8 text-sm'>
             <p className='flex gap-1 items-center justify-center  px-3 py-1 text-slate-600 rounded-full'>
-              <HiLocationMarker /> {userInfo?.location ?? "No Location"}
+              <HiLocationMarker /> {userInfo?.location ?? "Madaraka"}
             </p>
             <p className='flex gap-1 items-center justify-center  px-3 py-1 text-slate-600 rounded-full'>
               <AiOutlineMail /> {userInfo?.email ?? "No Email"}
             </p>
             <p className='flex gap-1 items-center justify-center  px-3 py-1 text-slate-600 rounded-full'>
-              <FiPhoneCall /> {userInfo?.contact ?? "No Contact"}
+              <FiPhoneCall /> {userInfo?.contact ?? "0720354678"}
             </p>
           </div>
         </div>
@@ -237,7 +238,7 @@ const SeekerProfile = () => {
             <div className='w-full md:w-2/3 flex flex-col gap-4 text-lg text-slate-600 mt-20 md:mt-0'>
               <p className='text-[#0536e7]  font-semibold text-2xl'>ABOUT</p>
               <span className='text-base text-justify leading-7'>
-                {userInfo?.about ?? "No About Found"}
+                {userInfo?.about ?? "Plumber living around Madaraka with 2  yrs experience and a handful of projects."}
               </span>
             </div>
 

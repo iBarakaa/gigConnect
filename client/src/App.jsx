@@ -1,6 +1,6 @@
 import {  Outlet, Navigate, Route, Routes, useLocation  } from "react-router-dom";
 import {  Navbar, Footer  } from "./components";
-import {  About, AuthPage, FindJobs, JobDetail, ListerProfile, Listers, SeekerProfile, UploadJob  } from "./pages";
+import {  About, Auth, FindJobs, JobDetail, ListerProfile, Listers, SeekerProfile, UploadJob  } from "./pages";
 import {  useSelector } from "react-redux";
 
 // page movements
@@ -38,7 +38,7 @@ function App() {
 
           <Route 
             path={
-              user?.user?.accountType === "seeker"
+              user?.accountType === "seeker"
               ? "/seeker-profile"
               : "/seeker-profile/:id"
             }
@@ -52,7 +52,7 @@ function App() {
           </Route>
         {/* when unauthed */}
           <Route path="/about-us" element={<About />} />
-          <Route path={"/user-auth"} element={<AuthPage />} />
+          <Route path={"/user-auth"} element={<Auth />} />
 
       </Routes>
     {/* if user is not logged in show no footer */}

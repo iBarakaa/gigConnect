@@ -1,5 +1,5 @@
 import About from "./About";
-import AuthPage from "./AuthPage";
+import Auth from "./Auth";
 import FindJobs from "./FindJobs";
 import JobDetail from "./JobDetail";
 import ListerProfile from "./ListerProfile";
@@ -9,7 +9,7 @@ import UploadJob from "./UploadJob";
 
 export { 
     About,
-    AuthPage,
+    Auth,
     FindJobs,
     JobDetail,
     ListerProfile,
